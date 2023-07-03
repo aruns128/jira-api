@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
-import { UpdateRegistrationDto } from './dto/update-registration.dto';
 import * as bcrypt from 'bcrypt';
 import { Registration } from './entities/registration.entity';
 import { Repository } from 'typeorm';
@@ -42,22 +41,6 @@ export class RegistrationService {
 
       return response;
     }
-  }
-
-  findAll() {
-    return `This action returns all registration`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} registration`;
-  }
-
-  update(id: number, updateRegistrationDto: UpdateRegistrationDto) {
-    return `This action updates a #${id} registration`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} registration`;
   }
 
   async findByUsername(email: string): Promise<Registration | undefined> {
