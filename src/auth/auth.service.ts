@@ -4,15 +4,16 @@ import * as bcrypt from 'bcrypt';
 import { Registration } from './entities/registration.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
-export class RegistrationService {
+export class AuthService {
   constructor(
     @InjectRepository(Registration)
     private readonly registrationRepository: Repository<Registration>,
   ) {}
 
-  async create(createRegistrationDto: CreateRegistrationDto) {
+  async register(createRegistrationDto: CreateRegistrationDto) {
     const userExists = await this.findByUsername(createRegistrationDto.email);
 
     if (userExists) {
@@ -40,6 +41,27 @@ export class RegistrationService {
       };
 
       return response;
+    }
+  }
+
+  async login(loginDto: LoginDto) {
+    const userExists = await this.findByUsername(loginDto.email);
+
+    if (userExists) {
+      const isPasswordMatch = bcrypt.compareSync(
+        loginDto.password,
+        userExists.password,
+      );
+      if (isPasswordMatch) {
+        const { password, ...userDetails } = userExists;
+
+        return userDetails;
+      } else {
+        throw new BadRequestException('Invalid credentials');
+      }
+      console.log(isPasswordMatch);
+    } else {
+      throw new BadRequestException('Invalid credentials');
     }
   }
 
